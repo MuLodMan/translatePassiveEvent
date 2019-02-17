@@ -1,6 +1,6 @@
 被动事件监听:  
     被动事件监听是在[Dom规范中](https://dom.spec.whatwg.org/#dom-addeventlisteneroptions-passive)的一种新功能,这种功能通过消除滚动时的阻塞来帮助开发者提高滚动性(译者注：后面会详细说明为什么滚动时将会阻塞)。开发者可以通过给触摸和滑轮监听器传递{passive:true}。参数的方式来表示开发者不会在监听的回调函数中调用preventDefault函数。这个功能在Chrome51、FireFox49和WebKit中均已经实现。查看下面的[视频](https://www.chromestatus.com/features/5745543795965952)来观察两种被动事件监听器的表现。
-####问题:
+###问题:
 
 &nbsp;&nbsp;&nbsp;&nbsp;平滑的滚动表现在良好的web用户体验中起着十分重要的作用，尤其在触摸设备中。当JavaScript运行时,所有的现代浏览器通过一个专门的线程来保证滚动的流畅。但是这种优化（负责处理滚动的线程）又会部分的被touchstart 和touchmove这些监听函数所阻塞。这是因为可能在事件的处理函数中通过调用preventDefault()来阻止滚动。然而在某些场景中开发者的确想要阻止滚动,分析表明绝大多数的事件处理函数并不会真正的调用preventdefault()函数，这导致浏览器在滑动过程中受到不必要的阻塞。举个例子,在Android的chrome中80%的触摸事件会导致滑动阻塞，但其实（开发者）并不想让其真正的阻塞。当滑动开始时，这些事件中的10%将多延时100ms，更加灾难性的是其中的一些滑动事件将会延时500ms。
 &nbsp;&nbsp;&nbsp;&nbsp;许多开发者了解到[在文档元素中传入空函数](https://rbyers.github.io/janky-touch-scroll.html)依然会在滑动中造成十分大的负面影响。因此开发者理所当然的希望事件处理行为[不应该有任何的副作用](https://dom.spec.whatwg.org/#observing-event-listeners)。
@@ -19,7 +19,7 @@
 ```
   现在当不存在监听时浏览器可以只做滚动而不会被触摸或者滑轮监听所阻塞。被动监听将不会受到性能副作用的影响。因此浏览器将会立刻响应滑动而不会被JavaScript阻塞，这可以保证用户会获得流畅的滑动体验。
 
-  特征检测:
+###特征检测:
   因为老的浏览器会将第三个参数解释成capture为true,那么对于开发者而言使用特征检测或者使用描述在避免不可预见的结果中起了十分重要的作用。特征检测可以按照如下方式去做:
   ```
  // 通过在Option对象中设置getter来判断被动选项是否会被获取
@@ -41,7 +41,7 @@ elem.addEventListener('touchstart', fn, supportsPassive ? { passive: true } : fa
  elem.addEventListener('touchstart', fn,
  detectIt.passiveEvents ? {passive:true} : false);
 ```
-####不必取消事件:
+###不必取消事件:
   在某些场景下，当用户触摸或者使用滚轮时开发者开发者会主动禁止滚动，这些场景包括：
   - 对地图进行移动或者变焦。
   - 全页面或者全屏游戏。
